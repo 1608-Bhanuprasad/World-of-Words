@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World of Words</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        body.dark-mode {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .navbar.dark-mode {
+            background: #34495e;
+        }
+        .navbar-brand .brand-text {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+        }
+        .navbar-brand .highlight-w {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .search-bar {
+            max-width: 500px;
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+        .action-icon {
+            color: #3498db;
+            font-size: 1.2em;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .action-icon:hover {
+            color: #2980b9;
+        }
+        .dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background: #fff;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            border-radius: 8px;
+            right: 0;
+            top: 100%;
+            padding: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .dropdown-menu a {
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s ease;
+        }
+        .dropdown-menu a:hover {
+            background: #f0f2f5;
+        }
+        .dark-mode-toggle {
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #3498db;
+        }
+        .dark-mode-toggle:hover {
+            color: #2980b9;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+            margin-top: 70px;
+            border-radius: 0 0 20px 20px;
+        }
+        .blog-section, .trending-section {
+            padding: 50px 20px;
+        }
+        .blog-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+        }
+        .read-more {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        .read-more:hover {
+            background: #c0392b;
+        }
+        .trending-card {
+            width: 260px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .trending-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        .trending-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+        body.dark-mode .navbar, body.dark-mode .blog-card, body.dark-mode .dropdown-menu {
+            background: #34495e;
+            color: #ecf0f1;
+        }
+        body.dark-mode .dropdown-menu a {
+            color: #ecf0f1;
+        }
+        body.dark-mode .blog-section, body.dark-mode .trending-section {
+            background: #2c3e50;
+        }
+        .notification-item {
+            margin-bottom: 10px;
+        }
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .chatbot-container.expanded {
+            width: 70vw;
+            max-width: 900px;
+            min-width: 500px;
+            height: 80vh;
+            max-height: 700px;
+            min-height: 500px;
+        }
+        body.dark-mode .chatbot-container {
+            background: linear-gradient(145deg, #3b4a5f, #2c3e50);
+        }
+        .chatbot-header {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chatbot-header h5 {
+            margin: 0;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+        .chatbot-header .w-symbol {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-right: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        .chatbot-header-buttons button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            margin-left: 10px;
+            transition: transform 0.2s ease;
+        }
+        .chatbot-header-buttons button:hover {
+            transform: scale(1.1);
+        }
+        .chatbot-body {
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+        .chatbot-container.expanded .chatbot-body {
+            height: calc(80vh - 150px);
+            max-height: 550px;
+            min-height: 350px;
+        }
+        body.dark-mode .chatbot-body {
+            background: #2c3e50;
+            border-bottom: 1px solid #4a6278;
+        }
+        .chatbot-footer {
+            padding: 15px;
+            background: #fff;
+        }
+        body.dark-mode .chatbot-footer {
+            background: #34495e;
+        }
+        .chatbot-message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+        .user-message {
+            background: #3498db;
+            color: white;
+            margin-left: auto;
+        }
+        .bot-message {
+            background: #e9ecef;
+            color: #333;
+        }
+        body.dark-mode .bot-message {
+            background: #4a6278;
+            color: #ecf0f1;
+        }
+        .loading-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #777;
+            font-style: italic;
+        }
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #3498db;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .predefined-question {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px 5px 5px 0;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+        .predefined-question:hover {
+            background: #2980b9;
+        }
+        .chatbot-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+            font-size: 24px;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+            animation: pulse 2s infinite;
+        }
+        .chatbot-button:hover {
+            transform: scale(1.1) rotate(15deg);
+            background: linear-gradient(90deg, #2980b9, #3498db);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6);
+        }
+        .chatbot-button:active {
+            transform: scale(0.95);
+        }
+        .chatbot-button[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .chatbot-button:hover[data-tooltip]::after {
+            opacity: 1;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 8px 20px rgba(52, 152, 219, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4); }
+        }
+        /* Footer Styles */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            padding: 10px 20px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        body.dark-mode .footer {
+            background: #34495e;
+        }
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+        .footer a:hover {
+            color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'mainuser' %}">
+                <span class="brand-text"><span class="highlight-w">W</span>orld of Words</span>
+            </a>
+            <form class="search-bar d-flex" method="GET" action="{% url 'mainuser' %}">
+                <select name="category" class="form-select me-2" style="max-width: 150px;">
+                    <option value="all" {% if category == 'all' %}selected{% endif %}>All</option>
+                    <option value="tech" {% if category == 'tech' %}selected{% endif %}>Tech</option>
+                    <option value="romance" {% if category == 'romance' %}selected{% endif %}>Romance</option>
+                    <option value="lifestyle" {% if category == 'lifestyle' %}selected{% endif %}>Lifestyle</option>
+                    <option value="entertainment" {% if category == 'entertainment' %}selected{% endif %}>Entertainment</option>
+                </select>
+                <input class="form-control me-2" type="search" name="q" placeholder="Search..." value="{{ query }}" aria-label="Search">
+                <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <div class="d-flex ms-3 align-items-center">
+                <div class="dropdown-container">
+                    <a href="#" class="action-icon me-2 write-icon"><i class="fas fa-pen"></i></a>
+                    <div class="dropdown-menu write-dropdown">
+                        <a href="{% url 'editor' %}?type=blog"><i class="fas fa-blog"></i>Blogs</a>
+                        <a href="{% url 'editor' %}?type=novel"><i class="fas fa-book"></i>Novels</a>
+                        <a href="{% url 'editor' %}?type=short-story"><i class="fas fa-book-open"></i>Short Stories</a>
+                        <a href="{% url 'editor' %}?type=gossip"><i class="fas fa-comments"></i>Gossips</a>
+                    </div>
+                </div>
+                <div class="dropdown-container">
+                    <a href="#" class="action-icon me-2 notification-icon"><i class="fas fa-bell"></i></a>
+                    <div class="dropdown-menu notification-dropdown">
+                        <h3>Notifications</h3>
+                        <ul id="notification-list">
+                            <li>Loading notifications...</li>
+                        </ul>
+                        <h3>Suggestions</h3>
+                        <ul id="suggestions-list">
+                            <li>Loading suggestions...</li>
+                        </ul>
+                    </div>
+                </div>
+                <a href="{% url 'user_profile' %}" class="action-icon me-2"><i class="fas fa-user"></i></a>
+                <span class="dark-mode-toggle me-2"><i class="fas fa-moon"></i></span>
+                <button class="button" id="logoutButton"><a href="{% url 'logout' %}" class="nav-link" data-key="login">Logout</a></button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <h1>Welcome to World of Words, {{ user.username }}!</h1>
+            <p class="lead mt-3">Explore, Write, and Share Your Stories</p>
+            <a href="{% url 'shop' %}" class="btn btn-light mb-3">Shop All Products</a>
+            <p><a href="{% url 'about' %}" style="color: black;" class="nounderline">Learn more about World of Words</a></p>
+        </div>
+    </section>
+
+    <section class="blog-section">
+        <div class="container">
+            <h2 class="mb-4">Latest Blogs</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.9VNK00l_3JT0h_ztmX4oYQHaEK?w=312&h=185&c=12&rs=1&p=0&o=6&dpr=1.3&pid=23.1" alt="Weekly Horoscope" class="img-fluid mb-2">
+                        <h5>Weekly Horoscope: April 6 to 12, 2025</h5>
+                        <p>Insights into the astrological events influencing the week ahead.</p>
+                        <p><small>By Glamour | April 6, 2025</small></p>
+                        <a href="https://www.glamour.com/story/weekly-horoscope-april-6-to-12-2025" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://www.bing.com/th/id/OIP.iaiBsRpHpp7XbO7a2GB2MQHaHa?w=312&h=185&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" alt="Astros Crawfish Boil" class="img-fluid mb-2">
+                        <h5>Astros Crawfish Boil: April 1, 2025</h5>
+                        <p>Updates on the Houston Astros and notable baseball news.</p>
+                        <p><small>By The Crawfish Boxes | April 1, 2025</small></p>
+                        <a href="https://www.crawfishboxes.com/2025/4/1/24398456/astros-crawfish-boil-april-1-2025" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.5WTSv95dBN0hDN_DcRR1XAHaE8?w=312&h=185&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Gen Z & Tumblr" class="img-fluid mb-2">
+                        <h5>Gen Z & Tumblr: A New Wave</h5>
+                        <p>An analysis of Tumblr's resurgence among Gen Z users.</p>
+                        <p><small>By Business Insider | April 5, 2025</small></p>
+                        <a href="https://www.businessinsider.com/gen-z-flocking-tumblr-millennials-musk-zuckerberg-safe-space-2025-4" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.0omvl-PpqRYUICzIaN7KdwHaJ4?w=312&h=185&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="April Book Picks" class="img-fluid mb-2">
+                        <h5>Here Are the 15 Books You Should Read in April</h5>
+                        <p>A curated list of recommended books for the month.</p>
+                        <p><small>By TIME | April 2025</small></p>
+                        <a href="https://time.com/7272137/best-april-books-2025/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.GvzaZdM2QalzqFbroDJSPAHaEK?w=315&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Service95 Book Club" class="img-fluid mb-2">
+                        <h5>Dua Lipa's Service95 Book Club April Pick</h5>
+                        <p>An overview of Dua Lipa's book club selection and reading list.</p>
+                        <p><small>By Page Six | April 2025</small></p>
+                        <a href="https://pagesix.com/style/dua-lipa-service95-book-club-picks/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.F1NDOpR-YCgTw3T_SZpBiQHaE8?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Comic Book Creators" class="img-fluid mb-2">
+                        <h5>Discovering Black, Hispanic, and Indigenous Comic Book Creators</h5>
+                        <p>An exploration of diverse comic book creators and their work.</p>
+                        <p><small>By LOC Headlines & Heroes | April 2025</small></p>
+                        <a href="https://blogs.loc.gov/headlinesandheroes/2025/04/ahha-discovering-black-hispanic-and-indigenous-comic-book-creators/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.DTlVec4dYQoCy0OZoQWbWQAAAA?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Animal Antics" class="img-fluid mb-2">
+                        <h5>Animal Antics for April Fools' Day</h5>
+                        <p>Historical children's stories featuring animal antics.</p>
+                        <p><small>By LOC Families Blog | April 2025</small></p>
+                        <a href="https://blogs.loc.gov/families/2025/04/animal-antics-for-april-fools-day/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.XkanhxBskvSilEqYpcsTdwHaEK?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Longwood Gardens" class="img-fluid mb-2">
+                        <h5>Longwood Gardens Tour</h5>
+                        <p>A visit to the renowned Longwood Gardens by Martha Stewart.</p>
+                        <p><small>By Martha Stewart | April 2025</small></p>
+                        <a href="https://www.themarthablog.com/2025/04/longwood-gardens.html" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.f9LLghFYcDlWy4i1XRT8JgHaFU?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Old Apple Trees" class="img-fluid mb-2">
+                        <h5>Supporting Old Apple Trees</h5>
+                        <p>Techniques and experiences in maintaining aged apple trees.</p>
+                        <p><small>By Martha Stewart | April 2025</small></p>
+                        <a href="https://www.themarthablog.com/2025/04/supporting-old-apple-trees.html" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.TFC2vOsj8woUCkRFd7rt0QHaE7?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Spring Blooms" class="img-fluid mb-2">
+                        <h5>Naturalizing Spring Blooms</h5>
+                        <p>Tips on integrating spring flowers into natural landscapes.</p>
+                        <p><small>By Martha Stewart | April 2025</small></p>
+                        <a href="https://www.themarthablog.com/2025/04/naturalizing-spring-blooms.html" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP._jKlkgQdMX8OJIFi5Rwp7wHaFj?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Evergreens Pinetum" class="img-fluid mb-2">
+                        <h5>Adding Evergreens to My Pinetum</h5>
+                        <p>Expanding a personal collection of evergreen trees.</p>
+                        <p><small>By Martha Stewart | April 2025</small></p>
+                        <a href="https://www.themarthablog.com/2025/04/adding-evergreens-to-my-pinetum.html" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.Rx6ds9smMG_Nxq6WxFJ-DAHaEK?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Istanbul Blog" class="img-fluid mb-2">
+                        <h5>A Guest Blog from Istanbul & Dubai</h5>
+                        <p>Travel experiences from Istanbul and Dubai.</p>
+                        <p><small>By Martha Stewart Guest | April 2025</small></p>
+                        <a href="https://www.themarthablog.com/2025/04/a-guest-blog-from-a-trip-to-istanbul-and-dubai.html" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.2C9ooIeqcm3D2coslwRY6gHaGR?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Decorating Greenhouse" class="img-fluid mb-2">
+                        <h5>Decorating the Greenhouse with Spring Plants</h5>
+                        <p>Fresh blooms and planting tips for decorating your greenhouse this spring.</p>
+                        <p><small>By Martha Stewart | April 2025</small></p>
+                        <a href="https://www.themarthablog.com/2025/04/decorating-the-greenhouse-with-spring-plants.html" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.XFTExDvaThUTi83ufguGOgHaFh?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Science & Art" class="img-fluid mb-2">
+                        <h5>Where Science Meets Art</h5>
+                        <p>Examining how scientific concepts inspire artistic creation.</p>
+                        <p><small>By The J. Paul Getty Trust | April 2025</small></p>
+                        <a href="https://blogs.getty.edu/iris/where-science-meets-art/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.RPmN_ZbwLDDmWG2D12ht8AHaFj?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Medieval Glow" class="img-fluid mb-2">
+                        <h5>Getting the Glow in the Middle Ages</h5>
+                        <p>Historic cosmetic practices and beauty trends of the medieval era.</p>
+                        <p><small>By The Getty Iris | April 2025</small></p>
+                        <a href="https://blogs.getty.edu/iris/getting-the-glow-in-the-middle-ages/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.-dFUvY9gfs_WrtfSyqIgIgHaFj?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Graffiti Dreams" class="img-fluid mb-2">
+                        <h5>From Venice to Graffiti Dreams</h5>
+                        <p>A deep dive into evolving forms of street art and its cultural value.</p>
+                        <p><small>By The Getty Iris | April 2025</small></p>
+                        <a href="https://blogs.getty.edu/iris/from-venice-to-graffiti-dreams/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.h7CdFy8IEtH8OYoFtssYYQHaGt?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Getty Restaurant" class="img-fluid mb-2">
+                        <h5>Reimagining the Getty Restaurant</h5>
+                        <p>A look at the redesign of a cultural space combining art and cuisine.</p>
+                        <p><small>By The Getty Iris | April 2025</small></p>
+                        <a href="https://blogs.getty.edu/iris/reimagining-the-getty-restaurant/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.cjMmOhwsM61MA564E3zW8QHaFj?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Armenian Manuscripts" class="img-fluid mb-2">
+                        <h5>Preserving Armenian Manuscripts</h5>
+                        <p>The intricate work behind conserving ancient manuscripts and texts.</p>
+                        <p><small>By The Getty Iris | April 2025</small></p>
+                        <a href="https://blogs.getty.edu/iris/preserving-armenian-manuscripts/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.qbF5kXparAkslqWcAcjlTQHaFo?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Science & Art (2)" class="img-fluid mb-2">
+                        <h5>Science + Art: Mapping Knowledge</h5>
+                        <p>Visualizing the connections between science and visual arts.</p>
+                        <p><small>By The Getty Iris | April 2025</small></p>
+                        <a href="https://blogs.getty.edu/iris/science-art-mapping-knowledge/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.tCdHZyTWHCAX0X2wlQC7OAHaE8?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Cherry Blossoms" class="img-fluid mb-2">
+                        <h5>Cherry Blossoms & Japanese Culture</h5>
+                        <p>The history and symbolism of cherry blossoms in Japan.</p>
+                        <p><small>By Smithsonian | April 2025</small></p>
+                        <a href="https://www.si.edu/stories/cherry-blossoms-and-japanese-culture" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.AHV_3GtXjK7qboA6r8q5EgHaHa?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Street Style Trends" class="img-fluid mb-2">
+                        <h5>Spring 2025 Street Style Trends</h5>
+                        <p>What the latest fashionistas are wearing on the streets this season.</p>
+                        <p><small>By Vogue | April 2025</small></p>
+                        <a href="https://www.vogue.com/fashion/street-style/spring-2025-trends" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.pOTcyP0w3sWVEah3z7LPsQHaFS?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Clean Beauty Movement" class="img-fluid mb-2">
+                        <h5>Inside the Clean Beauty Movement</h5>
+                        <p>How natural ingredients are shaping the future of skincare and cosmetics.</p>
+                        <p><small>By Allure | April 2025</small></p>
+                        <a href="https://www.allure.com/clean-beauty-2025" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.6jFL32FeyQOn4Y1mWZkuCAHaD3?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Women in Tech" class="img-fluid mb-2">
+                        <h5>Women in Tech: Breaking Barriers</h5>
+                        <p>Spotlighting the women changing the face of technology in 2025.</p>
+                        <p><small>By Wired | April 2025</small></p>
+                        <a href="https://www.wired.com/story/women-in-tech-2025/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.yfMdpqBXw6pGK3X8uEEMEwHaHa?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Minimalist Living" class="img-fluid mb-2">
+                        <h5>The Power of Minimalist Living</h5>
+                        <p>How living with less can lead to more purpose and happiness in everyday life.</p>
+                        <p><small>By Zen Habits | April 2025</small></p>
+                        <a href="https://zenhabits.net/minimalist-living/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.W6Yx2YbO1-_AWuCiC0RK3wHaE8?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="AI & Creativity" class="img-fluid mb-2">
+                        <h5>AI and the Future of Creativity</h5>
+                        <p>Exploring how artificial intelligence is reshaping the creative process.</p>
+                        <p><small>By MIT Technology Review | April 2025</small></p>
+                        <a href="https://www.technologyreview.com/2025/04/ai-creativity/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.zL_5yBtmHybHG7MWu0R5fQHaE8?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Digital Nomad Guide" class="img-fluid mb-2">
+                        <h5>The Ultimate Guide for Digital Nomads</h5>
+                        <p>Tips for working remotely while traveling the world in 2025.</p>
+                        <p><small>By Nomadic Matt | April 2025</small></p>
+                        <a href="https://www.nomadicmatt.com/travel-blogs/digital-nomad-guide-2025/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.Ku3Mr4dAhROnUo0M63b7iwHaE1?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Healing Through Nature" class="img-fluid mb-2">
+                        <h5>Healing Through Nature Therapy</h5>
+                        <p>Discover the mental health benefits of reconnecting with nature.</p>
+                        <p><small>By Psychology Today | April 2025</small></p>
+                        <a href="https://www.psychologytoday.com/nature-therapy-healing" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.M3pCq-jTNsFLp7L41K_KcAHaEo?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Gen Z Finance" class="img-fluid mb-2">
+                        <h5>How Gen Z is Rewriting Financial Rules</h5>
+                        <p>From crypto to budgeting, how young adults are reshaping personal finance.</p>
+                        <p><small>By Forbes | April 2025</small></p>
+                        <a href="https://www.forbes.com/genz-financial-future/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.lsQN_AWyy5oaVzf9nLnX0AHaEH?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Mindful Eating" class="img-fluid mb-2">
+                        <h5>Mindful Eating: A New Approach to Wellness</h5>
+                        <p>Learn how conscious eating habits improve your relationship with food.</p>
+                        <p><small>By Healthline | April 2025</small></p>
+                        <a href="https://www.healthline.com/nutrition/mindful-eating-guide" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.U1C3JD74so14E87ITwTiAQHaLH?w=250&h=183&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Urban Gardening" class="img-fluid mb-2">
+                        <h5>Urban Gardening Made Easy</h5>
+                        <p>Turn your balcony into a green oasis with these beginner-friendly tips.</p>
+                        <p><small>By Gardenista | April 2025</small></p>
+                        <a href="https://www.gardenista.com/posts/urban-gardening-2025/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.3PWOvn2xI2wcuUTFJ-7hJQHaHa?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Sustainable Fashion" class="img-fluid mb-2">
+                        <h5>The Rise of Sustainable Fashion</h5>
+                        <p>How ethical brands are changing the industry with conscious clothing.</p>
+                        <p><small>By Eco Warrior Princess | April 2025</small></p>
+                        <a href="https://ecowarriorprincess.net/2025/04/sustainable-fashion-trends/" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.lGIqjBmE7DGcNFu0hW3RVgHaFy?w=312&h=165&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="BookTok Books" class="img-fluid mb-2">
+                        <h5>10 BookTok Books You Can’t Miss This Month</h5>
+                        <p>Popular TikTok reads that are flying off the shelves right now.</p>
+                        <p><small>By BuzzFeed Books | April 2025</small></p>
+                        <a href="https://www.buzzfeed.com/booktok-april-2025" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <img src="https://th.bing.com/th/id/OIP.-1UlG5yL2R7CRM4TiTIYPAHaEK?w=312&h=183&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Remote Work Design" class="img-fluid mb-2">
+                        <h5>Designing a Productive Home Office</h5>
+                        <p>Create a workspace that boosts creativity and focus for remote work.</p>
+                        <p><small>By Architectural Digest | April 2025</small></p>
+                        <a href="https://www.architecturaldigest.com/home-office-setup-2025" class="btn btn-danger read-more" target="_blank">Read More</a>
+                    </div>
+                </div>
+                {% for post in posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="blog-card">
+                        <h5>{{ post.title }}</h5>
+                        <p>{{ post.content|truncatewords:30 }}</p>
+                        <p><small>By {{ post.user.username }} | {{ post.created_at|date:"M d, Y" }}</small></p>
+                        <a href="{% url 'blog_detail' post.id %}" class="btn btn-danger read-more">Read More</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p>No dynamic posts available. Start writing!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="trending-section">
+        <div class="container">
+            <h2 class="mb-4">Trending Now</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.UzLJx7xJBeMh-ogkJOpNcAHaLG?w=208&h=305&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Recipes">
+                    <div style="padding: 15px;">
+                        <h5>14 Recipes to Make in April</h5>
+                        <p>Genre: Food & Cooking</p>
+                        <a href="https://www.allrecipes.com/recipes-we-cant-wait-to-make-april-2025-11703877" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.qor3LHP0xKqdd3-KkUiEFwHaE4?w=246&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="AI Gadgets">
+                    <div style="padding: 15px;">
+                        <h5>AI-Powered Gadgets of 2025</h5>
+                        <p>Genre: Technology</p>
+                        <a href="https://www.techradar.com/best/best-smart-home-devices" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP._IMa6QKiqP121u7t01At-AHaE4?w=246&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Meaningful Life">
+                    <div style="padding: 15px;">
+                        <h5>How to Live a Meaningful Life</h5>
+                        <p>Genre: Lifestyle</p>
+                        <a href="https://zenhabits.net/simple-living/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.-TuZcWHcvI4B58__hThKWwHaEK?w=328&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Mountain Escapes">
+                    <div style="padding: 15px;">
+                        <h5>Top 10 Mountain Escapes</h5>
+                        <p>Genre: Travel</p>
+                        <a href="https://www.lonelyplanet.com/articles/best-mountain-getaways" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.pD9Bc66jqPKQrVzL6p5aOQHaE8?w=279&h=187&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Meditation Guide">
+                    <div style="padding: 15px;">
+                        <h5>Daily Meditation Guide</h5>
+                        <p>Genre: Wellness</p>
+                        <a href="https://www.headspace.com/meditation/meditation-for-beginners" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.Fm2UQoYJ2X1Tp6-h50RjswAAAA?w=197&h=315&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Writing Tips">
+                    <div style="padding: 15px;">
+                        <h5>Writing Tips for Beginners</h5>
+                        <p>Genre: Writing</p>
+                        <a href="https://www.dailywritingtips.com/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.IRHmMsswPdg5vUZUlJNcpgHaFj?w=250&h=156&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Productivity Hacks">
+                    <div style="padding: 15px;">
+                        <h5>Productivity Hacks 2025</h5>
+                        <p>Genre: Productivity</p>
+                        <a href="https://jamesclear.com/articles" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.QZM7a5WJUKpuDJe90wSh7AHaKe?w=312&h=182&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Top Books">
+                    <div style="padding: 15px;">
+                        <h5>Top 10 Books to Read</h5>
+                        <p>Genre: Literature</p>
+                        <a href="https://bookriot.com/best-books-of-the-year/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://cdn.pixabay.com/photo/2015/06/24/15/45/coding-820275_1280.jpg" alt="JavaScript Basics">
+                    <div style="padding: 15px;">
+                        <h5>Learn JavaScript Basics</h5>
+                        <p>Genre: Programming</p>
+                        <a href="https://javascript.info/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.VGH5pfhqDCcAhDE56tD5SgHaE8?w=312&h=182&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Future of Internet">
+                    <div style="padding: 15px;">
+                        <h5>Future of the Internet</h5>
+                        <p>Genre: Tech & Society</p>
+                        <a href="https://www.wired.com/tag/internet/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.VJwnP001jKBd3RN4Q9CV_QHaHa?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Fashion Trends">
+                    <div style="padding: 15px;">
+                        <h5>Spring Fashion Trends 2025</h5>
+                        <p>Genre: Fashion</p>
+                        <a href="https://www.vogue.com/fashion/trends" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.gQOOV7I8TqYT9N__a6FNoQHaFZ?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Mars Mission">
+                    <div style="padding: 15px;">
+                        <h5>NASA’s Mission to Mars</h5>
+                        <p>Genre: Space</p>
+                        <a href="https://mars.nasa.gov/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.tyWAERg4FEJZoRDlZqhgoQHaIn?w=312&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Top Podcasts">
+                    <div style="padding: 15px;">
+                        <h5>Top Podcasts to Follow</h5>
+                        <p>Genre: Media</p>
+                        <a href="https://www.theverge.com/podcasts" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.TGemChcnLBxlcBnl40f6RAHaKe?w=312&h=182&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Home Workouts">
+                    <div style="padding: 15px;">
+                        <h5>Quick Home Workouts</h5>
+                        <p>Genre: Fitness</p>
+                        <a href="https://www.nerdfitness.com/" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                <div class="trending-card">
+                    <img src="https://th.bing.com/th/id/OIP.P3JWEm0IUBzyiNM0jjA1yAHaGN?w=312&h=182&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="30-Minute Meals">
+                    <div style="padding: 15px;">
+                        <h5>Easy 30-Minute Meals</h5>
+                        <p>Genre: Food</p>
+                        <a href="https://www.bonappetit.com/recipes/slideshow/30-minute-meals" target="_blank" class="btn btn-outline-danger btn-sm">Read More</a>
+                    </div>
+                </div>
+                {% for post in trending_posts %}
+                <div class="trending-card">
+                    {% if post.image_url %}
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/260x160" alt="Default Image">
+                    {% endif %}
+                    <div style="padding: 15px;">
+                        <h5>{{ post.title }}</h5>
+                        <p>{{ post.content|truncatewords:20 }}</p>
+                        <p><small>By {{ post.user.username }}</small></p>
+                        <a href="{% url 'blog_detail' post.id %}" class="btn btn-outline-danger btn-sm">Explore</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span style="margin-right: 20px;">World of Words @2025 All Rights Reserved</span>
+        <a href="{% url 'contact' %}">Contact</a>
+    </footer>
+
+    <!-- Gemini Bot Button -->
+    <button class="chatbot-button" onclick="toggleGeminiBot()" data-tooltip="Chat with World of Words!" aria-label="Open World of Words Chatbot">W</button>
+
+    <!-- Gemini Bot Container -->
+    <div class="chatbot-container" id="geminiBotContainer">
+        <div class="chatbot-header">
+            <h5><span class="w-symbol">W</span> World of Words</h5>
+            <div class="chatbot-header-buttons">
+                <button onclick="toggleExpandBot()"><i class="fas fa-expand"></i></button>
+                <button onclick="toggleGeminiBot()">✖</button>
+            </div>
+        </div>
+        <div class="chatbot-body" id="geminiBotBody">
+            <!-- Initial message will be set by JavaScript -->
+        </div>
+        <div class="chatbot-footer">
+            <textarea id="geminiBotInput" class="form-control" placeholder="Type your message..." rows="3"></textarea>
+            <button class="btn btn-primary mt-2 w-100" onclick="sendGeminiMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/marked.min.js"></script>
+    <script>
+        // Maintain conversation history
+        let conversationHistory = [];
+        const predefinedQuestions = [
+            "What features does this website offer?",
+            "How can I write a blog or story?",
+            "Can you check for plagiarism?",
+            "What are the latest blogs?",
+            "How do I toggle dark mode?",
+            "Can you give me some writing tips?"
+        ];
+
+        // Gemini Bot Functions
+        function toggleGeminiBot() {
+            const geminiBotContainer = document.getElementById('geminiBotContainer');
+            const geminiBotBody = document.getElementById('geminiBotBody');
+
+            if (geminiBotContainer.style.display === 'none') {
+                // Show the bot and display welcome message with predefined questions
+                geminiBotContainer.style.display = 'flex';
+                geminiBotBody.innerHTML = ''; // Clear previous messages
+
+                // Display welcome message
+                const welcomeMsgDiv = document.createElement('div');
+                welcomeMsgDiv.className = 'chatbot-message bot-message';
+                welcomeMsgDiv.innerHTML = marked.parse(`
+Hello! I'm World of Words, your guide. Here are some questions to get started:
+                `);
+                geminiBotBody.appendChild(welcomeMsgDiv);
+
+                // Display predefined questions as clickable buttons
+                const questionsDiv = document.createElement('div');
+                predefinedQuestions.forEach(question => {
+                    const questionBtn = document.createElement('button');
+                    questionBtn.className = 'predefined-question';
+                    questionBtn.textContent = question;
+                    questionBtn.onclick = () => sendGeminiMessage(question);
+                    questionsDiv.appendChild(questionBtn);
+                });
+                geminiBotBody.appendChild(questionsDiv);
+
+                geminiBotBody.scrollTop = geminiBotBody.scrollHeight;
+
+                // Clear conversation history when opening the bot
+                conversationHistory = [];
+            } else {
+                // Hide the bot
+                geminiBotContainer.style.display = 'none';
+            }
+        }
+
+        function toggleExpandBot() {
+            const geminiBotContainer = document.getElementById('geminiBotContainer');
+            const expandBtn = document.querySelector('.chatbot-header-buttons .fas');
+            geminiBotContainer.classList.toggle('expanded');
+            expandBtn.classList.toggle('fa-expand');
+            expandBtn.classList.toggle('fa-compress');
+        }
+
+        function sendGeminiMessage(message = null) {
+            const input = document.getElementById('geminiBotInput');
+            const geminiBotBody = document.getElementById('geminiBotBody');
+            const userMessage = message || input.value.trim();
+
+            if (!userMessage) return;
+
+            // Display user message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'chatbot-message user-message';
+            userMsgDiv.textContent = userMessage;
+            geminiBotBody.appendChild(userMsgDiv);
+
+            // Add user message to conversation history
+            conversationHistory.push({ role: 'user', message: userMessage });
+
+            // Display loading animation
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chatbot-message bot-message loading-message';
+            loadingDiv.innerHTML = '<div class="loading-spinner"></div> Thinking...';
+            geminiBotBody.appendChild(loadingDiv);
+            geminiBotBody.scrollTop = geminiBotBody.scrollHeight;
+
+            // Send request to backend for Gemini API processing
+            fetch("{% url 'gemini_bot' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ 
+                    message: userMessage,
+                    conversation_history: conversationHistory
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading animation
+                loadingDiv.remove();
+
+                // Display bot response (parsed as Markdown)
+                const botMsgDiv = document.createElement('div');
+                botMsgDiv.className = 'chatbot-message bot-message';
+                botMsgDiv.innerHTML = marked.parse(data.response);
+                geminiBotBody.appendChild(botMsgDiv);
+
+                // Add bot response to conversation history
+                conversationHistory.push({ role: 'bot', message: data.response });
+
+                // Display plagiarism check result if applicable
+                if (data.plagiarism_result) {
+                    const plagiarismMsgDiv = document.createElement('div');
+                    plagiarismMsgDiv.className = 'chatbot-message bot-message';
+                    plagiarismMsgDiv.innerHTML = marked.parse(data.plagiarism_result);
+                    geminiBotBody.appendChild(plagiarismMsgDiv);
+
+                    // Add plagiarism result to conversation history
+                    conversationHistory.push({ role: 'bot', message: data.plagiarism_result });
+                }
+
+                // Clear input and scroll to bottom
+                input.value = '';
+                geminiBotBody.scrollTop = geminiBotBody.scrollHeight;
+            })
+            .catch(error => {
+                // Remove loading animation
+                loadingDiv.remove();
+
+                console.error('Error:', error);
+                const errorMsgDiv = document.createElement('div');
+                errorMsgDiv.className = 'chatbot-message bot-message';
+                errorMsgDiv.textContent = 'Error processing your request. Please try again.';
+                geminiBotBody.appendChild(errorMsgDiv);
+
+                // Add error message to conversation history
+                conversationHistory.push({ role: 'bot', message: 'Error processing your request. Please try again.' });
+
+                geminiBotBody.scrollTop = geminiBotBody.scrollHeight;
+            });
+        }
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Existing JavaScript for Dropdowns and Notifications
+        document.addEventListener('DOMContentLoaded', () => {
+            const csrftoken = getCookie('csrftoken');
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+            const body = document.body;
+            const navbar = document.querySelector('.navbar');
+            const writeIcon = document.querySelector('.write-icon');
+            const notificationIcon = document.querySelector('.notification-icon');
+            const writeDropdown = document.querySelector('.write-dropdown');
+            const notificationDropdown = document.querySelector('.notification-dropdown');
+
+            if (!darkModeToggle || !writeIcon || !notificationIcon || !writeDropdown || !notificationDropdown) {
+                console.error('One or more required elements not found');
+                return;
+            }
+
+            darkModeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                navbar.classList.toggle('dark-mode');
+            });
+
+            function toggleDropdown(dropdown) {
+                dropdown.classList.toggle('show');
+            }
+
+            writeIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleDropdown(writeDropdown);
+            });
+
+            writeDropdown.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    writeDropdown.classList.remove('show');
+                });
+            });
+
+            notificationIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleDropdown(notificationDropdown);
+                fetchNotifications();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!writeIcon.contains(e.target) && !writeDropdown.contains(e.target)) {
+                    writeDropdown.classList.remove('show');
+                }
+                if (!notificationIcon.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                    notificationDropdown.classList.remove('show');
+                }
+            });
+
+            function fetchNotifications() {
+                fetch("{% url 'get_notifications' %}", {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrftoken
+                    },
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displayNotifications(data);
+                })
+                .catch(error => {
+                    document.getElementById("notification-list").innerHTML = "<li>Error loading notifications: " + error.message + "</li>";
+                });
+
+                fetch("{% url 'get_suggestions' %}", {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrftoken
+                    },
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    displaySuggestions(data);
+                })
+                .catch(error => {
+                    document.getElementById("suggestions-list").innerHTML = "<li>Error loading suggestions: " + error.message + "</li>";
+                });
+            }
+
+            function displayNotifications(notifications) {
+                let notificationContainer = document.getElementById("notification-list");
+                notificationContainer.innerHTML = "";
+
+                if (notifications.length === 0) {
+                    notificationContainer.innerHTML = "<li>No new notifications</li>";
+                    return;
+                }
+
+                notifications.forEach(notif => {
+                    let notifItem = document.createElement('li');
+                    notifItem.className = 'notification-item';
+                    notifItem.textContent = notif.message + ' (Posted on: ' + new Date(notif.created_at).toLocaleString() + ')';
+                    notificationContainer.appendChild(notifItem);
+                });
+            }
+
+            function displaySuggestions(suggestions) {
+                let suggestionsContainer = document.getElementById("suggestions-list");
+                suggestionsContainer.innerHTML = "";
+
+                if (suggestions.length === 0) {
+                    suggestionsContainer.innerHTML = "<li>No suggestions available</li>";
+                    return;
+                }
+
+                suggestions.forEach(suggestion => {
+                    let suggestionItem = document.createElement('li');
+                    suggestionItem.className = 'notification-item';
+                    suggestionItem.textContent = suggestion.suggestion_text + ' (By: ' + suggestion.author_name + ')';
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

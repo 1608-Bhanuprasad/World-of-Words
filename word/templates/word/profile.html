@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Profile Picture -->
+        {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+        {% else %}
+            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture">
+        {% endif %}
+
+        <h2>{{ profile.user.username }}</h2>
+        <p>Email: {{ profile.user.email }}</p>
+        <p>Bio: {{ profile.bio|default:"No bio available." }}</p>
+
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+
+    <div class="user-posts">
+        <h3>Your Published Posts</h3>
+        {% if posts %}
+            <ul>
+                {% for post in posts %}
+                    <li>
+                        <a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a> 
+                        <span class="post-type">({{ post.get_type_display }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No posts published yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

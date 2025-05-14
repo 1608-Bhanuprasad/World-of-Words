@@ -1,0 +1,9 @@
+<h1>{{ type|capfirst }} Suggestions</h1>
+<ul>
+{% for suggestion in suggestions %}
+    <li>{{ suggestion.text }} by {{ suggestion.user.username }}</li>
+{% empty %}
+    <li>No suggestions yet.</li>
+{% endfor %}
+</ul>
+<a href="{% url 'mainuser' %}">Back</a>

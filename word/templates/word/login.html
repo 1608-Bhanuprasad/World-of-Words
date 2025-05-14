@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - World of Words</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: black;
+            color: white;
+            text-align: center;
+            margin: 0;
+          /*  height: 50vh;*/
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            margin-top: 100px;
+            position: relative; /* Added for positioning the new button */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #6a82fb;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none; /* For the new button as a link */
+            display: inline-block; /* Ensures proper alignment */
+        }
+        .button:hover {
+            background-color: #fc5c7d;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Space between buttons */
+            margin-top: 20px;
+        }
+        .author-login {
+            background-color: #00b894; /* Distinct color for author login */
+        }
+        .author-login:hover {
+            background-color: #009875;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login to World of Words</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="button-container">
+                <button type="submit" class="button">Login</button>
+                <a href="{% url 'author_login' %}" class="button author-login">Authors Login</a>
+            </div>
+        </form>
+        <p>Don't have an account? <a href="{% url 'register' %}" style="color: #6a82fb;">Register here</a></p>
+    </div>
+</body>
+</html>

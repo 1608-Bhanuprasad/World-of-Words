@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Tales - Book Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: lightgray;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: #333;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        .search-bar button {
+            padding: 8px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: #0056b3;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 40px 0;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #backButton {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none;
+        }
+
+        #backButton:hover {
+            background: #b02a37;
+        }
+
+        .book-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            text-align: center;
+            width: 250px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .book-card:hover {
+            transform: scale(1.03);
+        }
+
+        .book-card img {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+            font-weight: bold;
+        }
+
+        .book-price {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .book-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .book-buttons a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .book-now {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .book-now:hover {
+            background-color: #0056b3;
+        }
+
+        .explore {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .explore:hover {
+            background-color: #1e7e34;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>Global Tales</h2>
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search books...">
+            <button onclick="searchBooks()">Search</button>
+        </div>
+    </div>
+
+    <h1>Famous Books - Global Tales Book Shop</h1>
+    <div class="controls">
+        <button id="backButton" onclick="showAllBooks()">Back to All Books</button>
+    </div>
+    <div class="book-grid" id="bookGrid">
+        <!-- Book 1 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.9yfd27lCEs9mncqTV_25WwHaLH?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Pride and Prejudice">
+            <div class="book-title">Pride and Prejudice</div>
+            <div class="book-price">$9.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/1503290565" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/pride/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 2 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.bq6wYHnbzlYXVlAX4IxeiwHaLH?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="To Kill a Mockingbird">
+            <div class="book-title">To Kill a Mockingbird</div>
+            <div class="book-price">$12.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0061120081" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/mocking/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 3 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.5fghEVBNKHeSYr8tyg-tVgHaLW?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="1984">
+            <div class="book-title">1984</div>
+            <div class="book-price">$14.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0451524934" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/1984/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 4 -->
+        <div class="book-card">
+            <img src="https://ts4.mm.bing.net/th?id=OIP.Ya_wZbqpoMfLYpshpR12WAHaKa&pid=15.1" alt="The Great Gatsby">
+            <div class="book-title">The Great Gatsby</div>
+            <div class="book-price">$10.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0743273567" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/gatsby/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 5 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.CuwsZnyJ6b2xaBZdKzDhdQHaLx?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Moby Dick">
+            <div class="book-title">Moby Dick</div>
+            <div class="book-price">$11.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/1503280780" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/mobydick/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 6 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.JHbibEhDQyJgCYBhtGNt8gHaLL?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="War and Peace">
+            <div class="book-title">War and Peace</div>
+            <div class="book-price">$13.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0199232768" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/warandpeace/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 7 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.2WwofUigvAOE5ra4QibF5wAAAA?w=190&h=290&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Catcher in the Rye">
+            <div class="book-title">The Catcher in the Rye</div>
+            <div class="book-price">$10.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0316769487" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/catcher/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 8 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.WcEMuJhhTAfW5Enrxw21PAHaLH?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Hobbit">
+            <div class="book-title">The Hobbit</div>
+            <div class="book-price">$15.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/054792822X" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/hobbit/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 9 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.FLL5KeD5M6ln-hbE8KenXAHaLj?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Jane Eyre">
+            <div class="book-title">Jane Eyre</div>
+            <div class="book-price">$9.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/1503278190" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/janeeyre/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 10 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP._5vHs3lHPIM5CyLsVE-XUwHaMK?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Odyssey">
+            <div class="book-title">The Odyssey</div>
+            <div class="book-price">$12 SEXPOT49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0140268863" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/odyssey/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 11 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.7I4SWtyrOBDiYtxa1vYgKQHaLx?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Crime and Punishment">
+            <div class="book-title">Crime and Punishment</div>
+            <div class="book-price">$11.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0486415872" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/crime/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 12 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.9hDt_vmbhIrj74cYNtaYyAHaK7?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Brave New World">
+            <div class="book-title">Brave New World</div>
+            <div class="book-price">$13.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0060850523" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/bravenew/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 13 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.fChYrXXTfD4LokWRLudjFwHaJ4?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Wuthering Heights">
+            <div class="book-title">Wuthering Heights</div>
+            <div class="book-price">$10.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/1505255600" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/wuthering/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 14 -->
+        <div class="book-card">
+            <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c" alt="Anna Karenina">
+            <div class="book-title">Anna Karenina</div>
+            <div class="book-price">$14.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0143035002" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/anna/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 15 -->
+        <div class="book-card">
+            <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765" alt="Les Misérables">
+            <div class="book-title">Les Misérables</div>
+            <div class="book-price">$16.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/045141943X" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/lesmis/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 16 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.usF6eHPyl56k4zrvf2v7XwHaLZ?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Divine Comedy">
+            <div class="book-title">The Divine Comedy</div>
+            <div class="book-price">$18.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0142437220" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/poetry/inferno/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 17 -->
+        <div class="book-card">
+            <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794" alt="The Brothers Karamazov">
+            <div class="book-title">The Brothers Karamazov</div>
+            <div class="book-price">$15.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0374528373" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/karamazov/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 18 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.b8qWNR7VL0s53tO2-KhpHgHaK6?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Don Quixote">
+            <div class="book-title">Don Quixote</div>
+            <div class="book-price">$17.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0060934344" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/donquixote/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 19 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.iktnpmieggzfcHUS9zfpewHaL_?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Frankenstein">
+            <div class="book-title">Frankenstein</div>
+            <div class="book-price">$9.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0486282112" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/frankenstein/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 20 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.4DH5mCZDvvimIYRURCtngwHaL8?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Dracula">
+            <div class="book-title">Dracula</div>
+            <div class="book-price">$12.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0486411095" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/dracula/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 21 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.ekgMsX60plom9e0SSkvHUwHaKp?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Iliad">
+            <div class="book-title">The Iliad</div>
+            <div class="book-price">$14.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0140275363" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/iliad/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 22 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP._0t1IQ6HyYHmHuNyeI7zNwHaLF?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Aeneid">
+            <div class="book-title">The Aeneid</div>
+            <div class="book-price">$13.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0143106295" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/aeneid/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 23 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.KFMnr_H4TdWufVeGPsEOCQHaLb?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Paradise Lost">
+            <div class="book-title">Paradise Lost</div>
+            <div class="book-price">$11.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0140424393" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/poetry/paradiselost/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 24 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.gIhR9SYosaiVqqMNxUVZaAHaKq?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Canterbury Tales">
+            <div class="book-title">The Canterbury Tales</div>
+            <div class="book-price">$10.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0140424385" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/canterbury/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 25 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.B7ng-vExePMXoQpfnXyZhwHaLI?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Beowulf">
+            <div class="book-title">Beowulf</div>
+            <div class="book-price">$9.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0393320979" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/beowulf/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 26 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.4C4uYD27X_i1lAWxgjCaewHaLd?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Metamorphosis">
+            <div class="book-title">The Metamorphosis</div>
+            <div class="book-price">$8.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0553213695" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/metamorphosis/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 27 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.yiej6L4_4AhNyowr-Rf1JQHaMm?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Heart of Darkness">
+            <div class="book-title">Heart of Darkness</div>
+            <div class="book-price">$10.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0486264645" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/heart/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 28 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.IRoXpA3BfltcMP829vfbuQHaJ4?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Stranger">
+            <div class="book-title">The Stranger</div>
+            <div class="book-price">$12.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0679720200" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/stranger/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 29 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.kSrIRu1IP4KuPrJMNiX_wwHaKn?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Trial">
+            <div class="book-title">The Trial</div>
+            <div class="book-price">$11.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0805209999" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/trial/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 30 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.3EbjhFiPyRJtz915r42ZHgHaMF?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Plague">
+            <div class="book-title">The Plague</div>
+            <div class="book-price">$13.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0679720219" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/plague/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 31 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.htqehaqbKfy1g06FUcVXXQHaJ8?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Madame Bovary">
+            <div class="book-title">Madame Bovary</div>
+            <div class="book-price">$14.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0140449124" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/bovary/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 32 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.uhos7XFPmOVFwCr3yu8HOwHaLS?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Scarlet Letter">
+            <div class="book-title">The Scarlet Letter</div>
+            <div class="book-price">$9.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0486280489" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/scarlet/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 33 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.KNca2UBaIsKaAD5KEkkqTQAAAA?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="The Picture of Dorian Gray">
+            <div class="book-title">The Picture of Dorian Gray</div>
+            <div class="book-price">$10.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0141439572" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/doriangray/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 34 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.F1w1J98YEQLv1W6c5eHCIQHaMb?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="A Tale of Two Cities">
+            <div class="book-title">A Tale of Two Cities</div>
+            <div class="book-price">$11.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0486406512" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/twocities/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 35 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.Clixw09vkf97gqdPshQvpwHaJt?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Great Expectations">
+            <div class="book-title">Great Expectations</div>
+            <div class="book-price">$12.49</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0141439564" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/greatex/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 36 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.O9u17wr_iCaVcsOD57qHDQHaKg?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Oliver Twist">
+            <div class="book-title">Oliver Twist</div>
+            <div class="book-price">$10.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0141439742" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/olivertwist/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 37 -->
+        <div class="book-card">
+            <img src="https://ts1.explicit.bing.net/th?id=OIP.cSuYrXpCCB2Rua_9PfJ7wAHaL2&pid=15.1" alt="David Copperfield">
+            <div class="book-title">David Copperfield</div>
+            <div class="book-price">$13.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0140439447" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/davidcopperfield/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 38 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.CDrNaO7od9vcRNL856m1XgAAAA?w=125&h=200&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Bleak House">
+            <div class="book-title">Bleak House</div>
+            <div class="book-price">$14.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0141439726" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/bleakhouse/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 39 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.50mC7AzgAruUn7OVhH-hrAHaLy?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Hard Times">
+            <div class="book-title">Hard Times</div>
+            <div class="book-price">$9.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/014143967X" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/hardtimes/" target="_blank">Explore</a>
+            </div>
+        </div>
+        <!-- Book 40 -->
+        <div class="book-card">
+            <img src="https://th.bing.com/th/id/OIP.fChYrXXTfD4LokWRLudjFwHaJ4?w=190&h=250&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Little Dorrit">
+            <div class="book-title">Little Dorrit</div>
+            <div class="book-price">$12.99</div>
+            <div class="book-buttons">
+                <a class="book-now" href="https://www.amazon.com/dp/0141439963" target="_blank">Book Now</a>
+                <a class="explore" href="https://www.sparknotes.com/lit/littledorrit/" target="_blank">Explore</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2025 Global Tales Book Shop. All rights reserved.</p>
+        <p>Contact us: <a href="mailto:info@globaltales.com">info@globaltales.com</a></p>
+    </div>
+
+    <script>
+        function searchBooks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const bookCards = document.getElementsByClassName('book-card');
+            const backButton = document.getElementById('backButton');
+            let hasResults = false;
+
+            for (let card of bookCards) {
+                const title = card.querySelector('.book-title').textContent.toLowerCase();
+                if (searchTerm && title.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+
+            // Show back button only if there's a search term and results
+            backButton.style.display = (searchTerm && hasResults) ? 'inline-block' : 'none';
+        }
+
+        function showAllBooks() {
+            const bookCards = document.getElementsByClassName('book-card');
+            const backButton = document.getElementById('backButton');
+            const searchInput = document.getElementById('searchInput');
+
+            for (let card of bookCards) {
+                card.style.display = 'block';
+            }
+            
+            // Hide back button and clear search input
+            backButton.style.display = 'none';
+            searchInput.value = '';
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+    </script>
+</body>
+</html>
+<a href="{% url 'mainuser' %}">Back</a>
