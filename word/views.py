@@ -1004,7 +1004,7 @@ import requests  # Add this if not already present
 
 # Sapling AI Detection Function
 def check_ai_generated(text):
-    API_KEY = "3JL69G7WHAKHZUE3VNEMSHBJL6GIBRO6"
+    API_KEY = ""
     url = "https://api.sapling.ai/api/v1/aidetect"
     headers = {
         "Authorization": f"Bearer {API_KEY}",
