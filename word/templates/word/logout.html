@@ -1,0 +1,19 @@
+/*************  ✨ Codeium Command ⭐  *************/
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - World of Words</title>
+</head>
+<body>
+    <h2>Logging out...</h2>
+    <p>You will be logged out of World of Words.</p>
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" style="color: white;">Logout</button>
+    </form>
+</body>
+</html>
+/******  6c3320d1-ed20-4fe6-ab61-452761130756  *******/

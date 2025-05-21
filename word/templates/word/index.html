@@ -1,0 +1,227 @@
+<!-- word/templates/word/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World of Words</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            overflow: hidden;
+            color: white;
+            position: relative;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 900px;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        h1 span {
+            opacity: 0;
+            display: inline-block;
+            animation: letterReveal 0.5s ease-out forwards;
+        }
+        @keyframes letterReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) rotateX(-90deg);
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+                filter: blur(0);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+        }
+        .typing {
+            font-size: 1.6rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            opacity: 0;
+            animation: pulseFade 2s infinite alternate;
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        @keyframes pulseFade {
+            0% { opacity: 0.7; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .buttons {
+            margin-top: 30px;
+            opacity: 0;
+            animation: buttonsRise 1s ease-out 2s forwards;
+        }
+        @keyframes buttonsRise {
+            0% { opacity: 0; transform: translateY(30px) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .button {
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #6a82fb, #fc5c7d);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(106, 130, 251, 0.4);
+        }
+        .button a {
+            text-decoration: none;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        .button:hover {
+            transform: scale(1.15) rotate(2deg);
+            box-shadow: 0 8px 25px rgba(252, 92, 125, 0.6);
+        }
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 2s infinite;
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        #loginButton, #registerButton {
+            display: none;
+        }
+        /* Particle Effects */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            animation: particleFloat 5s infinite ease-in-out;
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(0) scale(1); opacity: 0.5; }
+            50% { transform: translateY(-50vh) scale(1.2); opacity: 0.8; }
+            100% { transform: translateY(-100vh) scale(0.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <h1 id="title">
+            <span>W</span><span>e</span><span>l</span><span>c</span><span>o</span><span>m</span><span>e</span>
+            <span>&nbsp;</span>
+            <span>T</span><span>o</span>
+            <span>&nbsp;</span>
+            <span>W</span><span>o</span><span>r</span><span>l</span><span>d</span>
+            <span>&nbsp;</span>
+            <span>o</span><span>f</span>
+            <span>&nbsp;</span>
+            <span>W</span><span>o</span><span>r</span><span>d</span><span>s</span>
+        </h1>
+        <p class="typing" id="typing"></p>
+        <div class="buttons">
+            <button class="button" id="Getstarted">
+                <a href="{% url 'intermediate' %}" class="nav-link" data-key="getstarted">Get Started</a>
+            </button>
+            <button class="button" id="loginButton"><a href="{% url 'login' %}" class="nav-link" data-key="login">Login</a></button>
+            <button class="button" id="registerButton"><a href="{% url 'register' %}" class="nav-link" data-key="register">Register</a></button>
+        </div>
+    </div>
+    <script>
+        // Title letter animation timing
+        const letters = document.querySelectorAll('#title span');
+        letters.forEach((letter, index) => {
+            letter.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Typing animation
+        const words = ["Explore the beauty of words...", "Discover inspiring stories...", "Unleash your creativity..."];
+        let index = 0;
+        let wordIndex = 0;
+        let typingElement = document.getElementById("typing");
+        
+        function startTyping() {
+            typingElement.style.opacity = "1";
+            typeWords();
+        }
+
+        function typeWords() {
+            if (wordIndex < words[index].length) {
+                typingElement.innerHTML += words[index].charAt(wordIndex);
+                wordIndex++;
+                setTimeout(typeWords, 50);
+            } else {
+                setTimeout(eraseWords, 2000);
+            }
+        }
+
+        function eraseWords() {
+            if (wordIndex > 0) {
+                typingElement.innerHTML = words[index].substring(0, wordIndex - 1);
+                wordIndex--;
+                setTimeout(eraseWords, 25);
+            } else {
+                index = (index + 1) % words.length;
+                setTimeout(typeWords, 400);
+            }
+        }
+
+        setTimeout(startTyping, 3000);
+
+        // Particle effect
+        const particleContainer = document.getElementById('particles');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 5 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 3 + 3}s`;
+            particle.style.animationDelay = `${Math.random() * 2}s`;
+            particleContainer.appendChild(particle);
+            setTimeout(() => particle.remove(), 5000);
+        }
+
+        setInterval(createParticle, 200);
+    </script>
+</body>
+</html>

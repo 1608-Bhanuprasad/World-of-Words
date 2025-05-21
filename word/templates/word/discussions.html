@@ -1,0 +1,380 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: #e8ecef;
+            color: #2c3e50;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .sidebar {
+            width: 30%;
+            background: #fff;
+            border-right: 1px solid #d1d8dd;
+            overflow-y: auto;
+        }
+        .chat-area {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            background: #f7f9fa;
+        }
+        .sidebar-header {
+            padding: 20px;
+            background: #2a5298;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-header h2 {
+            font-size: 1.5em;
+        }
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+        .contact-list {
+            list-style: none;
+        }
+        .contact-list li {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8ecef;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .contact-list li:hover {
+            background: #f1f3f5;
+        }
+        .contact-list li.active {
+            background: #e1e8ed;
+            font-weight: bold;
+        }
+        .contact-pic {
+            width: 40px;
+            height: 40px;
+            background: #2a5298;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+            margin-right: 15px;
+        }
+        .contact-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .chat-header {
+            padding: 15px 20px;
+            background: #2a5298;
+            color: white;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #1e3c72;
+        }
+        .chat-header h3 {
+            font-size: 1.2em;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .message {
+            max-width: 70%;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 12px;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .message.sent {
+            background: #3498db;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .message.received {
+            background: #fff;
+            color: #2c3e50;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+        .message .timestamp {
+            font-size: 0.75em;
+            color: #7f8c8d;
+            margin-top: 5px;
+            text-align: right;
+        }
+        .message.sent .timestamp {
+            color: #d1e8ff;
+        }
+        .message .attachment {
+            margin-top: 5px;
+        }
+        .message .attachment img {
+            max-width: 200px;
+            border-radius: 5px;
+        }
+        .message .attachment a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .message.sent .attachment a {
+            color: #d1e8ff;
+        }
+        .message .attachment a:hover {
+            text-decoration: underline;
+        }
+        .message-form {
+            padding: 15px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #d1d8dd;
+            flex-wrap: wrap;
+        }
+        .message-form input[type="text"] {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #d1d8dd;
+            border-radius: 8px;
+            margin-right: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        .message-form input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .message-form input[type="file"] {
+            margin: 5px 10px 5px 0;
+            font-size: 0.9em;
+        }
+        .message-form button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px 0;
+        }
+        .message-form button:hover {
+            background: #2980b9;
+        }
+        .no-chat {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+            font-style: italic;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: 30%;
+            }
+            .chat-area {
+                width: 100%;
+                height: 70%;
+            }
+            .message-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .message-form input[type="text"],
+            .message-form input[type="file"],
+            .message-form button {
+                margin: 5px 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar: Contact List -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'author_dashboard' %}" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+                <h2>Discussions</h2>
+            </div>
+            <ul class="contact-list">
+                {% for author in all_authors %}
+                <li class="{% if recipient and author.id == recipient.id %}active{% endif %}" onclick="window.location.href='{% url 'discussions' %}?recipient={{ author.id }}'">
+                    <div class="contact-pic">{{ author.username|first|upper }}</div>
+                    <div class="contact-name">{{ author.username }}</div>
+                </li>
+                {% empty %}
+                <li class="no-chat">No other authors available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area">
+            {% if recipient %}
+            <div class="chat-header">
+                <div class="contact-pic">{{ recipient.username|first|upper }}</div>
+                <h3>{{ recipient.username }}</h3>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                {% for message in chat_messages %}
+                <div class="message {% if message.sender == current_user %}sent{% else %}received{% endif %}">
+                    {% if message.content %}
+                    <p>{{ message.content }}</p>
+                    {% endif %}
+                    {% if message.file_attachment %}
+                    <div class="attachment">
+                        <!-- Debug: Print the raw URL -->
+                        <p style="font-size: 0.8em; color: gray;">Debug URL: {{ message.file_attachment.url }}</p>
+                        {% if message.file_attachment.url|lower|slice:"-4:" == ".jpg" or message.file_attachment.url|lower|slice:"-4:" == ".jpeg" or message.file_attachment.url|lower|slice:"-4:" == ".png" %}
+                        <img src="{{ message.file_attachment.url }}" alt="Attachment">
+                        {% else %}
+                        <a href="{{ message.file_attachment.url }}" target="_blank">Download Attachment ({{ message.file_attachment.url|slice:"-4:"|upper }})</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="timestamp">{{ message.timestamp|date:"H:i, M d, Y" }}</div>
+                </div>
+                {% empty %}
+                <p class="no-chat">No messages yet. Start the conversation!</p>
+                {% endfor %}
+            </div>
+            <div class="message-form">
+                <input type="hidden" id="recipient" value="{{ recipient.id }}">
+                <input type="text" id="message-content" placeholder="Type a message...">
+                <input type="file" id="file-attachment" accept="image/jpeg,image/png,application/pdf">
+                <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+            {% else %}
+            <div class="chat-header">
+                <h3>No Chat Selected</h3>
+            </div>
+            <div class="chat-messages">
+                <p class="no-chat">Select an author to start chatting.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const recipientId = document.getElementById('recipient').value;
+            const content = document.getElementById('message-content').value.trim();
+            const fileInput = document.getElementById('file-attachment');
+            const file = fileInput.files[0];
+
+            if (!content && !file) {
+                alert('Please enter a message or attach a file.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('recipient', recipientId);
+            formData.append('content', content);
+            if (file) {
+                formData.append('file_attachment', file);
+            }
+
+            fetch('/discussions/', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Append the new message to the chat
+                    const chatMessages = document.getElementById('chat-messages');
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${data.message.is_sent ? 'sent' : 'received'}`;
+                    let messageHTML = '';
+                    if (data.message.content) {
+                        messageHTML += `<p>${data.message.content}</p>`;
+                    }
+                    if (data.message.file_url) {
+                        messageHTML += `<div class="attachment">`;
+                        // Debug: Print the raw URL in the new message
+                        messageHTML += `<p style="font-size: 0.8em; color: gray;">Debug URL: ${data.message.file_url}</p>`;
+                        if (['jpg', 'jpeg', 'png'].includes(data.message.file_type)) {
+                            messageHTML += `<img src="${data.message.file_url}" alt="Attachment">`;
+                        } else {
+                            messageHTML += `<a href="${data.message.file_url}" target="_blank">Download Attachment (${data.message.file_type.toUpperCase()})</a>`;
+                        }
+                        messageHTML += `</div>`;
+                    }
+                    messageHTML += `<div class="timestamp">${data.message.timestamp}</div>`;
+                    messageDiv.innerHTML = messageHTML;
+                    chatMessages.appendChild(messageDiv);
+                    chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to the bottom
+                    // Clear the inputs
+                    document.getElementById('message-content').value = '';
+                    document.getElementById('file-attachment').value = '';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while sending the message.');
+            });
+        }
+
+        // Function to get the CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Allow sending message on Enter key
+        document.getElementById('message-content').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

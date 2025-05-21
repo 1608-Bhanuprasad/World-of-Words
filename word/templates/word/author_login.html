@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Login</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0c0c0c;
+        }
+        .login-container {
+            background: #080808;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            width: 340px;
+        }
+        h2 {
+            text-align: center;
+            color: #2d3436;
+            margin-bottom: 25px;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #636e72;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #00b894;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:disabled {
+            background-color: #b2bec3;
+            cursor: not-allowed;
+        }
+        button:hover:not(:disabled) {
+            background-color: #009875;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .forgot-password a {
+            color: #00b894;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        #error-message {
+            color: #d63031;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #error-message.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 style="color: white;">Author Login</h2>
+        <form id="author-login-form" method="POST">
+            {% csrf_token %}
+            <label for="username" style="color: white;">Username</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password" style="color: white;">Password</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit" id="login-button">Login</button>
+            <div class="forgot-password">
+                <a href="{% url 'password_reset' %}">Forgot Password?</a>
+            </div>
+            <div id="error-message"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('author-login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const loginButton = document.getElementById('login-button');
+            const errorMessage = document.getElementById('error-message');
+            loginButton.disabled = true;
+            loginButton.textContent = 'Logging in...';
+
+            const formData = new FormData(this);
+            fetch("{% url 'author_login' %}", {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.add('show');
+                    loginButton.textContent = 'Login';
+                    loginButton.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('show');
+                loginButton.textContent = 'Login';
+                loginButton.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
